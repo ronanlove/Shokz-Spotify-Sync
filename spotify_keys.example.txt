@@ -1,0 +1,8 @@
+# Your own Spotify app keys (free). Needed for Liked Songs; also avoids rate limits on playlists.
+# 1. Go to https://developer.spotify.com/dashboard and log in, then click "Create app".
+# 2. Any name/description. Redirect URI: http://127.0.0.1:9900/   (exactly, then click Add)
+#    Tick "Web API", agree to the terms, and Save.
+# 3. Open the app > Settings, copy the Client ID and Client secret into the lines below.
+# Keep this file private.
+client_id=
+client_secret=

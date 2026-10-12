@@ -1,0 +1,8 @@
+# Personal Spotify keys - never commit
+spotify_keys.txt
+
+# Downloaded music and spotDL sync state
+music/
+.sync/
+
+__pycache__/
