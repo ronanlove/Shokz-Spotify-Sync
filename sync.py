@@ -59,26 +59,40 @@ def sync_name(entry):
 def download(entry):
     SYNC_DIR.mkdir(exist_ok=True)
     save_file = SYNC_DIR / f"{sync_name(entry)}.spotdl"
-    # Once a save file exists, spotDL syncs from it (adds new songs, removes ones taken off the playlist).
-    query = str(save_file) if save_file.exists() else entry
-    cmd = [
-        sys.executable, "-m", "spotdl", "sync", query,
-        "--save-file", str(save_file),
-        "--format", "mp3",
-        "--bitrate", "192k",
-        "--output", str(MUSIC_DIR / "{list-name}" / "{artists} - {title}.{output-ext}"),
-        "--threads", "2",  # gentler on YouTube for big libraries
-    ] + read_keys()
-    if entry.lower() == "saved":
-        if not read_keys():
-            print(f"\nSkipping Liked Songs: it needs your own Spotify keys in {KEYS_FILE.name} "
-                  "(the shared default keys are almost always rate-limited). "
-                  "See spotify_keys.example.txt.")
-            return
-        cmd.append("--user-auth")  # Liked Songs needs you to log in to Spotify in the browser
+    errors_file = SYNC_DIR / f"{sync_name(entry)}.errors.txt"
+    if entry.lower() == "saved" and not read_keys():
+        print(f"\nSkipping Liked Songs: it needs your own Spotify keys in {KEYS_FILE.name} "
+              "(the shared default keys are almost always rate-limited). "
+              "See spotify_keys.example.txt.")
+        return
     print(f"\n=== Syncing {entry} ===", flush=True)
-    subprocess.run(cmd, check=False)
-
+    for attempt in range(3):
+        # Once a save file exists, spotDL syncs from it (adds new songs, removes ones taken off the
+        # playlist) and rejects --save-file, so only pass that on the very first sync.
+        query = [str(save_file)] if save_file.exists() else [entry, "--save-file", str(save_file)]
+        cmd = [
+            sys.executable, "-m", "spotdl", "sync", *query,
+            "--save-errors", str(errors_file),
+            "--format", "mp3",
+            "--bitrate", "192k",
+            "--output", str(MUSIC_DIR / "{list-name}" / "{artists} - {title}.{output-ext}"),
+            "--threads", "2",  # gentler on YouTube for big libraries
+        ] + read_keys()
+        if attempt > 0:
+            # Some YouTube Music uploads are missing or blocked from downloading; regular
+            # YouTube usually has another upload of the same song.
+            cmd += ["--audio", "youtube", "youtube-music"]
+        if entry.lower() == "saved":
+            cmd.append("--user-auth")  # Liked Songs needs you to log in to Spotify in the browser
+        errors_file.unlink(missing_ok=True)
+        subprocess.run(cmd, check=False)
+        failed = errors_file.read_text(encoding="utf-8").strip() if errors_file.exists() else ""
+        if not failed:
+            return
+        # YouTube often refuses a few songs when many are requested quickly; the next pass retries them.
+        if attempt < 2:
+            print(f"\n{len(failed.splitlines())} song(s) failed, retrying...", flush=True)
+    print(f"\nStill failing after 3 tries (see {errors_file.name} in .sync):\n{failed}", flush=True)
 
 def find_shokz_drive():
     """Return the root of a removable drive whose label looks like Shokz headphones."""
