@@ -1,5 +1,6 @@
-# Personal Spotify keys - never commit
+# Personal Spotify keys and playlist links - never commit
 spotify_keys.txt
+playlists.txt
 
 # Downloaded music and spotDL sync state
 music/

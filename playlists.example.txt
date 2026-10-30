@@ -1,3 +1,4 @@
+# Copy this file to playlists.txt and put your links there (playlists.txt is git-ignored).
 # One Spotify link per line (playlist, album, or track). Lines starting with # are ignored.
 # In Spotify: right-click a playlist > Share > Copy link to playlist, then paste it below.
 # Write the word "saved" on its own line to include your Liked Songs (opens a Spotify login in your browser).

@@ -11,7 +11,7 @@ python -m spotdl --download-ffmpeg
 
 ## Usage
 
-1. Put Spotify playlist/album links in `playlists.txt`, one per line.
+1. Copy `playlists.example.txt` to `playlists.txt` and put Spotify playlist/album links in it, one per line. `playlists.txt` is git-ignored.
 2. Plug in the headphones and run `Sync Shokz.bat` (or `python sync.py`).
 
 Re-running only downloads new songs and only copies files that aren't already on the headphones.
@@ -25,3 +25,7 @@ Re-running only downloads new songs and only copies files that aren't already on
 ## Liked Songs
 
 Writing `saved` in `playlists.txt` downloads your Liked Songs, but it needs your own Spotify app keys (spotDL's shared keys are rate-limited). Copy `spotify_keys.example.txt` to `spotify_keys.txt` and follow the steps inside. `spotify_keys.txt` is git-ignored.
+
+## License
+
+[MIT](LICENSE)

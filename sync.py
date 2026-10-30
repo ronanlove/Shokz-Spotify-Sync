@@ -38,7 +38,8 @@ def read_keys():
 
 def read_playlists():
     if not PLAYLISTS_FILE.exists():
-        sys.exit(f"Missing {PLAYLISTS_FILE.name}. Add one Spotify playlist/album URL per line.")
+        sys.exit(f"Missing {PLAYLISTS_FILE.name}. Copy playlists.example.txt to {PLAYLISTS_FILE.name} "
+                 "and add one Spotify playlist/album URL per line.")
     entries = []
     for line in PLAYLISTS_FILE.read_text(encoding="utf-8-sig").splitlines():
         line = line.split("#", 1)[0].strip()
